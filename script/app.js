@@ -138,10 +138,12 @@
 
             document.addEventListener("keypress", function (e) {
                 scope.keypress(e.keyCode);
+                e.preventDefault();
             });
 
             document.addEventListener("keyup", function (e) {
                 scope.keyup(e.keyCode);
+                e.preventDefault();
             });
 
             scope.$watchCollection('commandLineSession.results', function () {
