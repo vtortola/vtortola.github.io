@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
-  <head>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.js"></script>
+        <script src="script/app.js"></script>
     <script>
+
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -10,9 +13,57 @@
         ga('create', 'UA-53263543-1', 'auto');
         ga('send', 'pageview');
 
-    </script>
-  </head>
-<body>
-<h1>TODO: vtortola home page</h1>
-</body>
+        </script>
+        <style>
+            html { height:100%;width:100%; background-color:black;}
+            .console{
+                background-image:url('back.jpg');
+                border:2px solid #4a0c64;
+                border-radius:5px;
+                background-repeat:no-repeat;
+                background-position:right bottom;
+                height:500px;
+                width:800px;
+                margin:50px auto;
+                color:#d9d7ff;
+                font-family:Consolas;
+                padding:20px;
+                overflow-x:hidden;
+                overflow-y:auto;
+                font-size:12px;
+            }
+            .cursor{
+                visibility:visible;
+            }
+            .cursor-hidden{
+                visibility:hidden;
+            }
+            .console-input{
+                color:#d9d7ff;
+                white-space:pre-wrap;
+            }
+            .result-line-server{
+                margin-left:10px;
+            }
+            ::-webkit-scrollbar {
+                width: 12px;
+            }
+
+            ::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+                border-radius: 10px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                -webkit-box-shadow: inset 0 0 6px #d9d7ff;
+            }
+        </style>
+        <title>vtortola.GitHub.io</title>
+    </head>
+    <body ng-app="myApp">
+        <console ng-controller="consoleController">
+
+        </console>
+    </body>
 </html>
