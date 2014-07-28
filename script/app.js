@@ -13,7 +13,7 @@
 
         me.commandLine = '';
 
-        me.prompt = '\\:>';
+        me.prompt = ':\\>';
 
         me.execute = function () {
             me.results.push({ type: 'text', text: me.prompt + me.commandLine });
@@ -93,26 +93,24 @@
         }
     };
 
-    $scope.keyup= function (keyCode) {
+    $scope.execute= function () {
+        commandLineSession.execute();
+        $scope.$apply();
+    };
 
-        if (keyCode == 13) {
-            commandLineSession.execute();
+    $scope.backspace = function () {
+        if ($scope.commandLineSession.commandLine) {
+            $scope.commandLineSession.commandLine = $scope.commandLineSession.commandLine.substring(0, $scope.commandLineSession.commandLine.length - 1);
             $scope.$apply();
         }
-        else if (keyCode == 8) {
-            if ($scope.commandLineSession.commandLine) {
-                $scope.commandLineSession.commandLine = $scope.commandLineSession.commandLine.substring(0, $scope.commandLineSession.commandLine.length - 1);
-                $scope.$apply();
-            }
-        }
-    };
+    }
 })
 
 
 .directive('resultLine', function () {
     return {
         restrict: 'E',
-        template: "<pre class='result-line'>{{item.output?'   ' + item.text:item.text}}</pre><br ng-if='item.breakLine' />",
+        template: "<pre class='result-line'>{{item.output?'  ' + item.text:item.text}}</pre><br ng-if='item.breakLine' />",
         link: function (scope, element, attrs, controller) {
             
         }
@@ -144,6 +142,16 @@
             document.addEventListener("keyup", function (e) {
                 scope.keyup(e.keyCode);
                 e.preventDefault();
+            });
+
+            document.addEventListener("keydown", function (e) {
+                if (e.keyCode == 8) {
+                    scope.backspace();
+                    e.preventDefault();
+                }
+                else if (e.keyCode == 13) {
+                    scope.execute();
+                }
             });
 
             scope.$watchCollection('commandLineSession.results', function () {
