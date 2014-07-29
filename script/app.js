@@ -23,7 +23,9 @@
                 break;
 
             case 'echo':
-                $scope.$broadcast('console-output', { output: true, text: [parts.slice(1).join(' ')], breakLine: true });
+                var echoed = parts.slice(1).join(' ');
+                echoed = echoed ? echoed : '';
+                $scope.$broadcast('console-output', { output: true, text: [echoed], breakLine: true });
                 break;
 
             default:

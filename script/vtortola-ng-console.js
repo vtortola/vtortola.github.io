@@ -102,7 +102,8 @@
 
             function type(input, line, i, endCallback) {
                 setTimeout(function () {
-                    input.textContent += line[i];
+                    input.textContent += (i<line.length?line[i]:'');
+
                     if (i < line.length - 1) {
                         scope.typeSound();
                         type(input, line, i + 1, endCallback);
