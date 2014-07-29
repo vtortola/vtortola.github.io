@@ -9,6 +9,9 @@
 
     $scope.typeSound = function () { };
 
+    var commandHistory = [];
+    var commandIndex = -1;
+
     var loadNotificationSound = function (path, setEffect) {
         var request = new XMLHttpRequest();
         request.open('GET', path, true);
@@ -47,16 +50,53 @@
        
     $scope.keypress= function (keyCode) {
         if ($scope.commandLine.length < 50) {
+            commandIndex = -1;
             $scope.commandLine += String.fromCharCode(keyCode);
             $scope.$apply();
         }
     };
 
+    $scope.previousCommand = function () {
+        if (commandIndex == -1) {
+            commandIndex = commandHistory.length;
+        }
+
+        if(commandIndex == 0)
+            return;
+
+        $scope.commandLine = commandHistory[--commandIndex];
+        $scope.$$phase || $scope.$apply();
+    }
+
+    $scope.nextCommand = function () {
+        if (commandIndex == -1) {
+            return;
+        }
+
+        if (commandIndex < commandHistory.length - 1) {
+            $scope.commandLine = commandHistory[++commandIndex];
+            $scope.$$phase || $scope.$apply();
+        }
+        else {
+            $scope.commandLine = '';
+            $scope.$$phase || $scope.$apply();
+        }
+    }
+
     $scope.execute = function () {
         var command = $scope.commandLine.replace(re, '');
+        $scope.commandLine = '';
+
+        if (commandHistory.length > 50) {
+            commandHistory.splice(0, 1);
+        }
+        
+        if(command != commandHistory[commandHistory.length-1])
+            commandHistory.push(command);
+
         $scope.results.push({ type: 'text', text:[$scope.prompt + command] });
         $scope.$emit('console-input',[command]);
-        $scope.commandLine = '';
+        
         $scope.$apply();
     };
 
@@ -68,7 +108,7 @@
     }
 })
 
-.directive('console', function () {
+.directive('console', function ($document) {
     return {
         restrict: 'E',
         controller: 'consoleController',
@@ -85,12 +125,13 @@
                 cursor.toggleClass('cursor-hidden');
             }, 500);
 
-            document.addEventListener("keypress", function (e) {
-                scope.keypress(e.keyCode);
+            $document.on("keypress", function (e) {
+                scope.keypress(e.which);
                 e.preventDefault();
             });
 
-            document.addEventListener("keydown", function (e) {
+            $document.on("keydown", function (e) {
+                
                 if (e.keyCode == 8) {
                     scope.backspace();
                     e.preventDefault();
@@ -98,10 +139,19 @@
                 else if (e.keyCode == 13) {
                     scope.execute();
                 }
+                else if (e.keyCode == 38) {
+                    scope.previousCommand();
+                    e.preventDefault();
+                }
+                else if (e.keyCode == 40) {
+                    scope.nextCommand();
+                    e.preventDefault();
+                }
             });
 
             function type(input, line, i, endCallback) {
                 setTimeout(function () {
+                    scope.typeSound();
                     input.textContent += (i<line.length?line[i]:'');
 
                     if (i < line.length - 1) {
@@ -125,7 +175,7 @@
 
                     var f = [function () {
                         scope.showPrompt = true;
-                        scope.$apply();
+                        scope.$$phase || scope.$apply();
                         consoleView[0].scrollTop = consoleView[0].scrollHeight;
                     }];
                     scope.showPrompt = false;
