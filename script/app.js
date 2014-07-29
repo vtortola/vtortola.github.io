@@ -41,10 +41,11 @@
                         throw new Error("There is no suitable handler for that command.");
 
                     var h = suitableHandlers[0];
+                    parts[0] = session;
                     var a = [];
                     a[0] = session;
                     a[1] = parts.slice(1).join(' ');
-                    h.handle.apply(h, a);
+                    h.handle.apply(h, parts);
                 }
             }
         };
@@ -134,9 +135,9 @@
     commandBrokerProvider.appendCommandHandler({
         command: 'echo',
         description: ['Echoes <parameter>'],
-        handle: function (session, param) {
-            param = !param ? "" : param;
-            session.output.push({ output: true, text: [param], breakLine: true });
+        handle: function (session) {
+            var a = Array.prototype.slice.call(arguments,1);
+            session.output.push({ output: true, text: [a.join(' ')], breakLine: true });
         }
     });
 
@@ -144,8 +145,8 @@
         command: 'eval',
         description: ['Evaluates <parameter> as Javascript and returns the output'],
         handle: function (session, param) {
-            param = !param ? "" : param;
-            param = eval(param);
+            var a = Array.prototype.slice.call(arguments, 1);
+            var param = eval(a.join(' '));
             param = param ? param.toString() : '';
             session.output.push({ output: true, text: [param], breakLine: true });
         }
@@ -154,7 +155,7 @@
     //commandBrokerProvider.appendCommandHandler({
     //    command: 'websocket',
     //    description: ['Starts a websocket session to <parameter> [protocol]'],
-    //    handle: function (session) {
+    //    handle: function (session, url, protocol) {
     //        session.output.push({ output: true, text: ["Websocket session opened..."], breakLine: true });
     //        session.commands.push({ command: 'startcontext', prompt: 'websocket:/>' });
     //        session.contextName = "websocket";
