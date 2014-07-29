@@ -1,4 +1,4 @@
-﻿angular.module('myApp', ['vtortola-ng-console'])
+﻿angular.module('myApp', ['vtortola-ng-terminal', 'vtortola.github.io.commands'])
 
 .service('$ga', function () {
     (function (i, s, o, g, r, a, m) {
@@ -16,12 +16,70 @@
 
     ga('create', 'UA-53263543-1', 'auto');
     ga('send', 'pageview');
-    return function () { return window.ga; };
+    return function () {
+        return window.ga.apply(window,arguments);
+    };
 })
 
-.controller('console', function ($scope, $ga) {
+.provider('commandBroker', function () {
+    
+    var provider = function () {
+        var me = {};
+        var handlers = [];
+
+        me.$get = function () {
+            return {
+                execute: function (session, consoleInput) {
+
+                    var parts = consoleInput.split(' ');
+
+                    var suitableHandlers = handlers.filter(function(item){
+                        return item.command == parts[0].toLowerCase();
+                    });
+
+                    if (suitableHandlers.length == 0)
+                        throw new Error("There is no suitable handler for that command.");
+
+                    var h = suitableHandlers[0];
+                    parts[0] = session;
+                    h.handle.apply(h, parts);
+                }
+            }
+        };
+
+        me.appendCommandHandler = function (handler) {
+            if (!handler || !handler.command || !handler.handle || !handler.description)
+                throw new Error("Invalid command handler");
+
+            var suitableHandlers = handlers.filter(function (item) {
+                return item.command == handler.command;
+            });
+
+            if (suitableHandlers.length != 0)
+                throw new Error("There is already a handler for that command.");
+
+            handlers.push(handler);
+        };
+
+        me.describe = function () {
+            return handlers.map(function (item) { return { command: item.command, description: item.description }; });
+        };
+
+        return me;
+    };
+    return provider();
+})
+
+.service('session', function(){
+    return {
+        commands: [],
+        output:[]
+    };
+})
+
+.controller('console', function ($scope, $ga, commandBroker, session) {
     setTimeout(function () {
-        $scope.$broadcast('console-output', { output: true, text: ['Welcome to vtortola.GitHub.io', 'This is a terminal prototype, still in development.' , '','Please type help for a list of commands'], breakLine: true });
+        $scope.$broadcast('console-output', { output: true, text: ['Welcome to vtortola.GitHub.io', 'This is a terminal prototype in development.' , '','Please type help for a list of commands'], breakLine: true });
         $scope.$apply();
     }, 100);
 
@@ -29,80 +87,115 @@
         $window._gaq.push(['_trackPageview', $location.path()]);
     });
 
-    $scope.$on('console-input', function (e, cinput) {
+    $scope.$on('console-input', function (e, consoleInput) {
+        var cmd = consoleInput[0];
 
-        $ga()('send', 'event', 'Console', 'Input', cinput[0]);
-
-        var command = cinput[0];
-        var parts = command.split(' ');
-        if (parts.length < 1)
-            return;
-
-        var output = [];
-        var commands = [];
-
-        switch (parts[0].toLowerCase()) {
-            case 'ver':
-            case 'version':
-                output.push({ output: true, text: ['Version 0.1 Beta'], breakLine: true });
-                break;
-
-            case 'help':
-                output.push({
-                    output: true,
-                    text: ['Avaiable commands:',
-                           '\tclear :\t\tClears the screen.',
-                           '\thelp :\t\tShows this help.',
-                           '\tversion :\tEchoes this software version.',
-                           '\techo <input> :\tEchoes a given input.',
-                           '\teval <input> :\tExecute the given input as Javascript and prints the result.'],
-                    breakLine: true
-                });
-                break;
-
-            case 'clear':
-                commands.push({ command:'clear' });
-                break;
-
-            case 'websocket':
-                commands.push({ command: 'startcontext', prompt: 'websocket:/>', contextName: 'websocket' });
-                break;
-
-            case 'exit':
-                if (cinput[1] == 'websocket') {
-                    commands.push({ command: 'endcontext'});
-                }
-                break;
-
-            case 'echo':
-                var echoed = parts.slice(1).join(' ');
-                echoed = echoed ? echoed : '';
-                output.push({ output: true, text: [echoed], breakLine: true });
-                break;
-
-            case 'eval':
-                var js = parts.slice(1).join(' ');
-                js = js ? js : '';
-                js = eval(js);
-                js = js? js.toString():'';
-                output.push({ output: true, text: [js], breakLine: true });
-                break;
-
-            default:
-                output.push({ output: true, text: ['There is no such command'], breakLine: true });
-                break;
+        $ga('send', 'event', 'Console', 'Input', cmd.command );
+        try {
+            commandBroker.execute(session, cmd.command);
+        } catch (err) {
+            session.output.push({output:true, breakLine:true, text:[err.message]});
         }
 
-        for (var i = 0; i < output.length; i++) {
-            $ga()('send', 'event', 'Console', 'Output', JSON.stringify(output[i]));
-            $scope.$broadcast('console-output',output[i]);
+        for (var i = 0; i < session.output.length; i++) {
+            $ga('send', 'event', 'Console', 'Output', JSON.stringify(session.output[i]));
+            $scope.$broadcast('console-output', session.output[i]);
+        }
+        for (var i = 0; i < session.commands.length; i++) {
+            $ga('send', 'event', 'Console', 'Command', JSON.stringify(session.commands[i]));
+            $scope.$broadcast('console-command', session.commands[i]);
         }
 
-        for (var i = 0; i < commands.length; i++) {
-            $ga()('send', 'event', 'Console', 'Command', JSON.stringify(commands[i]));
-            $scope.$broadcast('console-command', commands[i]);
-        }
-        
+        session.commands = [];
+        session.output = [];
     });
-});
+})
 
+.config(function (commandBrokerProvider) {
+
+    commandBrokerProvider.appendCommandHandler({
+        command: 'version',
+        description: ['Shows this software version'],
+        handle: function (session) {
+            session.output.push({ output: true, text: ['Version 0.1 Beta'], breakLine: true });
+        }
+    });
+
+    commandBrokerProvider.appendCommandHandler({
+        command: 'clear',
+        description: ['Clears the screen'],
+        handle: function (session) {
+            session.commands.push({ command: 'clear' });
+        }
+    });
+
+    commandBrokerProvider.appendCommandHandler({
+        command: 'echo',
+        description: ['Echoes <parameter>'],
+        handle: function (session, param) {
+            param = !param ? "" : param;
+            session.output.push({ output: true, text: [param], breakLine: true });
+        }
+    });
+
+    commandBrokerProvider.appendCommandHandler({
+        command: 'eval',
+        description: ['Evaluates <parameter> as Javascript and returns the output'],
+        handle: function (session, param) {
+            param = !param ? "" : param;
+            param = eval(param);
+            param = param ? param.toString() : '';
+            session.output.push({ output: true, text: [param], breakLine: true });
+        }
+    });
+
+    //commandBrokerProvider.appendCommandHandler({
+    //    command: 'websocket',
+    //    description: ['Starts a websocket session to <parameter>'],
+    //    handle: function (session) {
+    //        session.commands.push({ command: 'startcontext', prompt: 'websocket:/>', contextName: 'websocket' });
+    //    }
+    //});
+
+    //commandBrokerProvider.appendCommandHandler({
+    //    command: 'exit',
+    //    description: ['Ends a context'],
+    //    handle: function (session) {
+    //        if (session.contextName == 'websocket') {
+    //            session.commands.push({ command: 'endcontext' });
+    //        }
+    //    }
+    //});
+
+    commandBrokerProvider.appendCommandHandler({
+        command: 'help',
+        description: ['Provides instructions about how to use this terminal'],
+        handle: function (session, cmd) {
+            var list = commandBrokerProvider.describe();
+            var outText = [];
+            if (cmd) {
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].command == cmd) {
+                        var l = list[i];
+                        outText.push("Command help for: " + cmd);
+                        for (var j = 0; j < l.description.length; j++) {
+                            outText.push(l.description[j]);
+                        }
+                        break;
+                    }
+                }
+            }
+            else {
+                outText.push("Available commands:");
+                for (var i = 0; i < list.length; i++) {
+                    outText.push(" - " + list[i].command);
+                }
+                outText.push("");
+                outText.push("Enter 'help <command>' to get help for a particular command.");
+            }
+            session.output.push({ output: true, text: outText, breakLine: true });
+        }
+    });
+})
+
+;
