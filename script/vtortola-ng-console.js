@@ -7,6 +7,37 @@
     $scope.results = [];
     $scope.showPrompt = true;
 
+    $scope.typeSound = function () { };
+
+    var loadNotificationSound = function (path, setEffect) {
+        var request = new XMLHttpRequest();
+        request.open('GET', path, true);
+        request.responseType = 'arraybuffer';
+        request.onload = function () {
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            var context = new AudioContext();
+            context.decodeAudioData(request.response, function (buffer) {
+
+                setEffect(function () {
+                    var source = context.createBufferSource();
+                    source.buffer = buffer;
+                    source.connect(context.destination);
+                    source.start(0);
+                });
+            });
+        }
+        request.send();
+    };
+
+    loadNotificationSound('/type.wav', function (effect) {
+        $scope.typeSound = effect;
+    });
+
+    loadNotificationSound('/start.wav', function (effect) {
+        $scope.startSound = effect;
+        effect();
+    });
+
     $scope.$on('console-output', function (e, output) {
         if (!output.added) {
             output.added = true;
@@ -73,6 +104,7 @@
                 setTimeout(function () {
                     input.textContent += line[i];
                     if (i < line.length - 1) {
+                        scope.typeSound();
                         type(input, line, i + 1, endCallback);
                     }
                     else if (endCallback)
