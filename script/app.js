@@ -1,4 +1,4 @@
-﻿angular.module('myApp', ['vtortola-ng-terminal', 'vtortola.github.io.commands'])
+﻿angular.module('myApp', ['vtortola-ng-terminal'])
 
 .service('$ga', function () {
     (function (i, s, o, g, r, a, m) {
@@ -41,8 +41,10 @@
                         throw new Error("There is no suitable handler for that command.");
 
                     var h = suitableHandlers[0];
-                    parts[0] = session;
-                    h.handle.apply(h, parts);
+                    var a = [];
+                    a[0] = session;
+                    a[1] = parts.slice(1).join(' ');
+                    h.handle.apply(h, a);
                 }
             }
         };
@@ -151,18 +153,22 @@
 
     //commandBrokerProvider.appendCommandHandler({
     //    command: 'websocket',
-    //    description: ['Starts a websocket session to <parameter>'],
+    //    description: ['Starts a websocket session to <parameter> [protocol]'],
     //    handle: function (session) {
-    //        session.commands.push({ command: 'startcontext', prompt: 'websocket:/>', contextName: 'websocket' });
+    //        session.output.push({ output: true, text: ["Websocket session opened..."], breakLine: true });
+    //        session.commands.push({ command: 'startcontext', prompt: 'websocket:/>' });
+    //        session.contextName = "websocket";
     //    }
     //});
 
     //commandBrokerProvider.appendCommandHandler({
     //    command: 'exit',
-    //    description: ['Ends a context'],
+    //    description: ['Ends the current context'],
     //    handle: function (session) {
     //        if (session.contextName == 'websocket') {
+    //            session.contextName = "";
     //            session.commands.push({ command: 'endcontext' });
+    //            session.output.push({ output: true, text: ["Websocket ended."], breakLine: true });
     //        }
     //    }
     //});
