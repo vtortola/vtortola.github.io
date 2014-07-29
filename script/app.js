@@ -8,14 +8,22 @@
 
     $scope.$on('console-input', function (e, cinput) {
         var command = cinput[0];
-        switch (command) {
+        var parts = command.split(' ');
+        if (parts.length < 1)
+            return;
+
+        switch (parts[0]) {
             case 'ver':
             case 'version':
-                $scope.$broadcast('console-output', { output: true, text: ['Version 0.1Beta'], breakLine: true });
+                $scope.$broadcast('console-output', { output: true, text: ['Version 0.1 Beta'], breakLine: true });
                 break;
 
             case 'help':
-                $scope.$broadcast('console-output', { output: true, text: ['No commands are avaiable', 'This app is still in development  :)'], breakLine: true });
+                $scope.$broadcast('console-output', { output: true, text: ['Avaiable commands:', '  help', '  version', '  echo'], breakLine: true });
+                break;
+
+            case 'echo':
+                $scope.$broadcast('console-output', { output: true, text: [parts.slice(1).join(' ')], breakLine: true });
                 break;
 
             default:

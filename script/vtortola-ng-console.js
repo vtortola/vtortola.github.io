@@ -46,7 +46,7 @@
     });
        
     $scope.keypress= function (keyCode) {
-        if ($scope.commandLine.length < 20) {
+        if ($scope.commandLine.length < 50) {
             $scope.commandLine += String.fromCharCode(keyCode);
             $scope.$apply();
         }
