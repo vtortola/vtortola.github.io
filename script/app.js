@@ -39,8 +39,9 @@
             return;
 
         var output = [];
+        var commands = [];
 
-        switch (parts[0]) {
+        switch (parts[0].toLowerCase()) {
             case 'ver':
             case 'version':
                 output.push({ output: true, text: ['Version 0.1 Beta'], breakLine: true });
@@ -50,12 +51,27 @@
                 output.push({
                     output: true,
                     text: ['Avaiable commands:',
+                           '\tclear :\t\tClears the screen.',
                            '\thelp :\t\tShows this help.',
                            '\tversion :\tEchoes this software version.',
                            '\techo <input> :\tEchoes a given input.',
                            '\teval <input> :\tExecute the given input as Javascript and prints the result.'],
                     breakLine: true
                 });
+                break;
+
+            case 'clear':
+                commands.push({ command:'clear' });
+                break;
+
+            case 'websocket':
+                commands.push({ command: 'startcontext', prompt: 'websocket:/>', contextName: 'websocket' });
+                break;
+
+            case 'exit':
+                if (cinput[1] == 'websocket') {
+                    commands.push({ command: 'endcontext'});
+                }
                 break;
 
             case 'echo':
@@ -80,6 +96,11 @@
         for (var i = 0; i < output.length; i++) {
             $ga()('send', 'event', 'Console', 'Output', JSON.stringify(output[i]));
             $scope.$broadcast('console-output',output[i]);
+        }
+
+        for (var i = 0; i < commands.length; i++) {
+            $ga()('send', 'event', 'Console', 'Command', JSON.stringify(commands[i]));
+            $scope.$broadcast('console-command', commands[i]);
         }
         
     });
