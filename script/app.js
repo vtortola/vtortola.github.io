@@ -2,7 +2,7 @@
 
 .controller('console', function ($scope) {
     setTimeout(function () {
-        $scope.$broadcast('console-output', { output: true, text: ['Welcome to vtortola.GitHub.io','Please type help for a list of commands'], breakLine: true });
+        $scope.$broadcast('console-output', { output: true, text: ['Welcome to vtortola.GitHub.io', 'This is a terminal prototype, still in development.' , '','Please type help for a list of commands'], breakLine: true });
         $scope.$apply();
     }, 100);
 
