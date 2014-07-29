@@ -15,7 +15,7 @@
                 break;
 
             case 'help':
-                $scope.$broadcast('console-output', { output: true, text: ['No commands are avaiable', 'This app is still in development:)'], breakLine: true });
+                $scope.$broadcast('console-output', { output: true, text: ['No commands are avaiable', 'This app is still in development  :)'], breakLine: true });
                 break;
 
             default:
