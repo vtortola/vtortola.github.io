@@ -193,6 +193,7 @@
                                 var wbreak = i == newValue.text.length -1 && newValue.breakLine;
                                 f.push(function () {
                                     results[0].appendChild(wline); type(wline, wtextLine, 0, wf);
+                                    consoleView[0].scrollTop = consoleView[0].scrollHeight;
                                     if (wbreak) {
                                         var breakLine = document.createElement('br');
                                         results[0].appendChild(breakLine);
