@@ -223,4 +223,9 @@
     // ga create UA-53263543-1 {"userId":"112"}
 }])
 
+.config(['terminalConfigurationProvider', function (terminalConfigurationProvider) {
+    terminalConfigurationProvider.setTypeSoundUrl('/type.wav');
+    terminalConfigurationProvider.setStartSoundUrl('/start.wav');
+}])
+
 ;
