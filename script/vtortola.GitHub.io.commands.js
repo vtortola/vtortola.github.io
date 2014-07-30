@@ -145,6 +145,24 @@
         return me;
     };
     commandBrokerProvider.appendCommandHandler(gaCommandHandler());
+
+    var feedbackCommandHandler = function () {
+        var me = {};
+        var _ga = null;
+        me.command = 'feedback';
+        me.description = ['Sends a feedback message to the author.'];
+        me.init = ['$ga', function ($ga) {
+            _ga = $ga;
+        }];
+        me.handle = function (session, param) {
+            var a = Array.prototype.slice.call(arguments, 1);
+            var param = a.join(' ');
+            _ga('send', 'event', 'Console', 'Feedback', param);
+            session.output.push({ output: true, text: ["Your message have been sent.", "Thanks for the feedback!."], breakLine: true });
+        }
+        return me;
+    };
+    commandBrokerProvider.appendCommandHandler(feedbackCommandHandler());
 }])
 
 ;
