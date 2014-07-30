@@ -158,18 +158,32 @@
     return provider();
 })
 
-.service('session', function(){
-    return {
-        commands: [],
-        output:[]
-    };
-})
-
-.controller('console',['$scope','$ga','commandBroker','session', function ($scope, $ga, commandBroker, session) {
+.controller('console',['$scope','$ga','commandBroker', function ($scope, $ga, commandBroker) {
     setTimeout(function () {
         $scope.$broadcast('console-output', { output: true, text: ['Welcome to vtortola.GitHub.io', 'This is a terminal prototype in development.' , '','Please type help for a list of commands'], breakLine: true });
         $scope.$apply();
     }, 100);
+
+    $scope.session = {
+        commands: [],
+        output: []
+    };
+
+    $scope.$watchCollection('session.commands', function (n) {
+        for (var i = 0; i < n.length; i++) {
+            $ga('send', 'event', 'Console', 'Command', JSON.stringify(n[i]));
+            $scope.$broadcast('console-command', n[i]);
+        }
+        $scope.session.commands.splice(0, $scope.session.commands.length);
+    });
+
+    $scope.$watchCollection('session.output', function (n) {
+        for (var i = 0; i < n.length; i++) {
+            $ga('send', 'event', 'Console', 'Output', JSON.stringify(n[i]));
+            $scope.$broadcast('console-output', n[i]);
+        }
+        $scope.session.output.splice(0, $scope.session.output.length);
+    });
 
     $scope.$on('$viewContentLoaded', function (event) {
         $ga('send', 'pageview');
@@ -180,27 +194,15 @@
 
         $ga('send', 'event', 'Console', 'Input', cmd.command );
         try {
-            commandBroker.execute(session, cmd.command);
+            commandBroker.execute($scope.session, cmd.command);
         } catch (err) {
-            session.output.push({output:true, breakLine:true, text:[err.message]});
+            $scope.session.output.push({output:true, breakLine:true, text:[err.message]});
         }
-
-        for (var i = 0; i < session.output.length; i++) {
-            $ga('send', 'event', 'Console', 'Output', JSON.stringify(session.output[i]));
-            $scope.$broadcast('console-output', session.output[i]);
-        }
-        for (var i = 0; i < session.commands.length; i++) {
-            $ga('send', 'event', 'Console', 'Command', JSON.stringify(session.commands[i]));
-            $scope.$broadcast('console-command', session.commands[i]);
-        }
-
-        session.commands = [];
-        session.output = [];
     });
 }])
 
 .config(['$gaProvider',function ($gaProvider) {
-    //$gaProvider.ga('create', 'UA-53263543-1', 'auto');
+    $gaProvider.ga('create', 'UA-53263543-1', 'auto');
     //$gaProvider.ga('create', 'UA-53263543-1', { 'userId': '11' });
     // ga create UA-53263543-1 {"userId":"112"}
 }])
@@ -252,27 +254,31 @@
         }
     });
 
-    //commandBrokerProvider.appendCommandHandler({
-    //    command: 'websocket',
-    //    description: ['Starts a websocket session to <parameter> [protocol]'],
-    //    handle: function (session, url, protocol) {
-    //        session.output.push({ output: true, text: ["Websocket session opened..."], breakLine: true });
-    //        session.commands.push({ command: 'startcontext', prompt: 'websocket:/>' });
-    //        session.contextName = "websocket";
-    //    }
-    //});
+    commandBrokerProvider.appendCommandHandler({
+        command: 'websocket',
+        description: ["[TODO]", 'Starts a websocket session.','Syntax: websocket <url> [protocol]'],
+        handle: function (session, url, protocol) {
+            if (!url) {
+                throw new Error("The parameter 'url' is required, type 'help websocket' to get help.")
+            }
 
-    //commandBrokerProvider.appendCommandHandler({
-    //    command: 'exit',
-    //    description: ['Ends the current context'],
-    //    handle: function (session) {
-    //        if (session.contextName == 'websocket') {
-    //            session.contextName = "";
-    //            session.commands.push({ command: 'endcontext' });
-    //            session.output.push({ output: true, text: ["Websocket ended."], breakLine: true });
-    //        }
-    //    }
-    //});
+            session.output.push({ output: true, text: ["[TODO]", "Openning connection to " + url + (protocol?" with protocol " + protocol :"") + "...", "Type 'exit' to exit."], breakLine: true });
+            session.commands.push({ command: 'startcontext', prompt: 'websocket:/>' });
+            session.contextName = "websocket";
+        }
+    });
+
+    commandBrokerProvider.appendCommandHandler({
+        command: 'exit',
+        description: ['Ends the current context'],
+        handle: function (session) {
+            if (session.contextName == 'websocket') {
+                session.contextName = "";
+                session.commands.push({ command: 'endcontext' });
+                session.output.push({ output: true, text: ["Websocket ended."], breakLine: true });
+            }
+        }
+    });
 
     commandBrokerProvider.appendCommandHandler({
         command: 'help',
@@ -295,7 +301,7 @@
             else {
                 outText.push("Available commands:");
                 for (var i = 0; i < list.length; i++) {
-                    outText.push(" - " + list[i].command);
+                    outText.push("  " + list[i].command);
                 }
                 outText.push("");
                 outText.push("Enter 'help <command>' to get help for a particular command.");
