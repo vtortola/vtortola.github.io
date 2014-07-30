@@ -166,7 +166,7 @@
             text: ['Welcome to vtortola.GitHub.io',
                    'This is a terminal prototype in development.',
                    '',
-                   'Please type help for a list of commands'],
+                   "Please type 'help' to open a list of commands"],
             breakLine: true
         });
         $scope.$apply();
@@ -212,7 +212,7 @@
                 commandBroker.execute($scope.session, cmd.command);
             }
         } catch (err) {
-            $scope.session.output.push({output:true, breakLine:true, text:[err.message]});
+            $scope.session.output.push({ output: true, breakLine: true, text: [err.message, "Please type 'help' to see a list of commands"] });
         }
     });
 }])
