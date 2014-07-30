@@ -1,24 +1,34 @@
-﻿angular.module('myApp', ['vtortola-ng-terminal'])
+﻿angular.module('vtortola.GitHub.io', ['vtortola-ng-terminal'])
 
-.service('$ga', function () {
-    (function (i, s, o, g, r, a, m) {
-        i['GoogleAnalyticsObject'] = r;
-        i[r] = i[r] || function () {
-            (i[r].q = i[r].q || []).push(arguments)
-        },
-        i[r].l = 1 * new Date();
-        a = s.createElement(o),
-        m = s.getElementsByTagName(o)[0];
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m);
-    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+.provider('$ga', function () {
 
-    ga('create', 'UA-53263543-1', 'auto');
-    ga('send', 'pageview');
-    return function () {
-        return window.ga.apply(window,arguments);
+    window['GoogleAnalyticsObject'] = 'ga';
+    window['ga'] = window['ga'] || function () { (window['ga'].q = window['ga'].q || []).push(arguments)}
+    window['ga'].l = 1 * new Date();
+    var script = document.createElement('script');
+    var prevScript = document.getElementsByTagName('script')[0];
+    script.async = 1;
+    script.src = '//www.google-analytics.com/analytics.js';
+    prevScript.parentNode.insertBefore(script, prevScript);
+
+    var provider = function () {
+        var me = {};
+
+        me.$get = function () {
+            ga('send', 'pageview');
+            return function () {                
+                return window.ga.apply(window, arguments);
+            }
+        };
+
+        me.ga = function () {
+                return window.ga.apply(window, arguments);
+        };
+
+        return me;
     };
+
+    return provider();
 })
 
 .provider('commandBroker', function () {
@@ -27,7 +37,7 @@
         var me = {};
         var handlers = [];
 
-        me.$get = function () {
+        me.$get = ['$injector', function ($injector) {
             return {
                 execute: function (session, consoleInput) {
 
@@ -41,6 +51,10 @@
                         throw new Error("There is no suitable handler for that command.");
 
                     var h = suitableHandlers[0];
+
+                    if (h.init)
+                        $injector.invoke(h.init);
+
                     parts[0] = session;
                     var a = [];
                     a[0] = session;
@@ -48,7 +62,7 @@
                     h.handle.apply(h, parts);
                 }
             }
-        };
+        }];
 
         me.appendCommandHandler = function (handler) {
             if (!handler || !handler.command || !handler.handle || !handler.description)
@@ -70,6 +84,7 @@
 
         return me;
     };
+
     return provider();
 })
 
@@ -80,14 +95,14 @@
     };
 })
 
-.controller('console', function ($scope, $ga, commandBroker, session) {
+.controller('console',['$scope','$ga','commandBroker','session', function ($scope, $ga, commandBroker, session) {
     setTimeout(function () {
         $scope.$broadcast('console-output', { output: true, text: ['Welcome to vtortola.GitHub.io', 'This is a terminal prototype in development.' , '','Please type help for a list of commands'], breakLine: true });
         $scope.$apply();
     }, 100);
 
     $scope.$on('$viewContentLoaded', function (event) {
-        $window._gaq.push(['_trackPageview', $location.path()]);
+        $ga('send', 'pageview');
     });
 
     $scope.$on('console-input', function (e, consoleInput) {
@@ -112,9 +127,13 @@
         session.commands = [];
         session.output = [];
     });
-})
+}])
 
-.config(function (commandBrokerProvider) {
+.config(['$gaProvider',function ($gaProvider) {
+    $gaProvider.ga('create','UA-53263543-1','auto');
+}])
+
+.config(['commandBrokerProvider', function (commandBrokerProvider) {
 
     commandBrokerProvider.appendCommandHandler({
         command: 'version',
@@ -203,6 +222,21 @@
             session.output.push({ output: true, text: outText, breakLine: true });
         }
     });
-})
+
+    var gaCommandHandler = function () {
+        var me = {};
+        var _ga = null;
+        me.command= 'ga';
+        me.description= ['Manipulates Google Analytics'];
+        me.init= ['$ga', function($ga){
+            _ga=$ga;
+        }];
+        me.handle= function (session, param) {
+            _ga.apply(_ga, Array.prototype.slice.call(arguments, 1));
+        }
+        return me;
+    };
+    commandBrokerProvider.appendCommandHandler(gaCommandHandler());
+}])
 
 ;
