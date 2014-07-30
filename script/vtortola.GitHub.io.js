@@ -161,7 +161,7 @@
 .controller('console',['$scope','$ga','commandBroker', function ($scope, $ga, commandBroker) {
 
     setTimeout(function () {
-        $scope.$broadcast('console-output', {
+        $scope.$broadcast('terminal-output', {
             output: true,
             text: ['Welcome to vtortola.GitHub.io',
                    'This is a terminal prototype in development.',
@@ -181,7 +181,7 @@
     $scope.$watchCollection('session.commands', function (n) {
         for (var i = 0; i < n.length; i++) {
             $ga('send', 'event', 'Console', 'Command', JSON.stringify(n[i]));
-            $scope.$broadcast('console-command', n[i]);
+            $scope.$broadcast('terminal-command', n[i]);
         }
         $scope.session.commands.splice(0, $scope.session.commands.length);
         $scope.$$phase || $scope.$apply();
@@ -190,7 +190,7 @@
     $scope.$watchCollection('session.output', function (n) {
         for (var i = 0; i < n.length; i++) {
             $ga('send', 'event', 'Console', 'Output', JSON.stringify(n[i]));
-            $scope.$broadcast('console-output', n[i]);
+            $scope.$broadcast('terminal-output', n[i]);
         }
         $scope.session.output.splice(0, $scope.session.output.length);
         $scope.$$phase || $scope.$apply();
@@ -200,7 +200,7 @@
         $ga('send', 'pageview');
     });
 
-    $scope.$on('console-input', function (e, consoleInput) {
+    $scope.$on('terminal-input', function (e, consoleInput) {
         var cmd = consoleInput[0];
 
         $ga('send', 'event', 'Console', 'Input', cmd.command );
