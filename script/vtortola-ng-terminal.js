@@ -42,6 +42,11 @@
         effect();
     });
 
+    $scope.handlePaste = function (e) {
+        $scope.commandLine += e.clipboardData.getData('text/plain');
+        $scope.$$phase || $scope.$apply();
+    };
+
     $scope.$on('console-output', function (e, output) {
         if (!output.added) {
             output.added = true;
@@ -128,7 +133,7 @@
     return {
         restrict: 'E',
         controller: 'consoleController',
-        template: "<section class='console'><div class='results'></div><span class='prompt' ng-show='showPrompt'>{{prompt}}</span><span class='console-input'>{{commandLine}}</span><span class='cursor'>_</span></section>",
+        template: "<section class='console' ng-paste='handlePaste($event)'><div class='results'></div><span class='prompt' ng-show='showPrompt'>{{prompt}}</span><span class='console-input'>{{commandLine}}</span><span class='cursor'>_</span></section>",
         link: function (scope, element, attrs, controller) {
             
             var consoleView = angular.element(element[0].querySelector('.console'));
