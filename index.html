@@ -6,21 +6,30 @@
         <script src="script/vtortola.GitHub.io.js"></script>
         <script src="script/vtortola.GitHub.io.commands.js"></script>
         <style>
-            html { height:100%;width:100%; background-color:black;background-image: url('back.jpg'); background-size:cover;}
+            html { 
+                height:100%;
+                width:100%; 
+                background: rgb(0,0,0);
+                background: -moz-linear-gradient(-45deg,  rgba(0,0,0,1) 0%, rgba(69,72,77,1) 100%);
+                background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(0,0,0,1)), color-stop(100%,rgba(69,72,77,1)));
+                background: -webkit-linear-gradient(-45deg,  rgba(0,0,0,1) 0%,rgba(69,72,77,1) 100%);
+                background: -o-linear-gradient(-45deg,  rgba(0,0,0,1) 0%,rgba(69,72,77,1) 100%);
+                background: -ms-linear-gradient(-45deg,  rgba(0,0,0,1) 0%,rgba(69,72,77,1) 100%);
+                background: linear-gradient(135deg,  rgba(0,0,0,1) 0%,rgba(69,72,77,1) 100%);
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#45484d',GradientType=1 );
+            }
             pre{
                 margin:0;
                 padding:0;
             }
             .terminal {
-                background: -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%, rgba(0,0,0,0.57) 88%, rgba(0,0,0,0.65) 100%);
-                background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(0,0,0,0)), color-stop(88%,rgba(0,0,0,0.57)), color-stop(100%,rgba(0,0,0,0.65)));
-                background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.57) 88%,rgba(0,0,0,0.65) 100%);
-                background: -o-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.57) 88%,rgba(0,0,0,0.65) 100%);
-                background: -ms-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.57) 88%,rgba(0,0,0,0.65) 100%);
-                background: radial-gradient(ellipse at center,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.57) 88%,rgba(0,0,0,0.65) 100%);
+                background: -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 83%, rgba(0,0,0,0.65) 100%);
+                background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(0,0,0,0)), color-stop(83%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0.65)));
+                background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 83%,rgba(0,0,0,0.65) 100%);
+                background: -o-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 83%,rgba(0,0,0,0.65) 100%);
+                background: -ms-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 83%,rgba(0,0,0,0.65) 100%);
+                background: radial-gradient(ellipse at center,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 83%,rgba(0,0,0,0.65) 100%);
                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000',GradientType=1 );
-                
-                border: 2px solid #2f3e69;
                 border-radius: 20px;
                 background-size:cover;
                 background-repeat: no-repeat;
@@ -28,14 +37,14 @@
                 height: 500px;
                 width: 720px;
                 margin: 50px auto;
-                color: #d9d7ff;
+                color: #F6F6FF;
                 font-family: monospace;
                 padding: 20px;
                 overflow-x: hidden;
                 overflow-y: hidden;
                 font-size: 12px;
                 text-shadow: 0 0 8px rgba(255, 255, 255, 1);
-                box-shadow: 0 0 10px #d9d7ff inset;
+                box-shadow: 0 0 20px rgba(217, 215, 255, 0.85) inset, 2px 2px 16px #000;
             }
             .cursor{
                 visibility:visible;
@@ -44,7 +53,6 @@
                 visibility:hidden;
             }
             .terminal-input{
-                color:#d9d7ff;
                 white-space:pre-wrap;
             }
             .result-line-server{

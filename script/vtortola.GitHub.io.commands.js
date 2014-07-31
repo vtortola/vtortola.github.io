@@ -4,7 +4,7 @@
 
     commandBrokerProvider.appendCommandHandler({
         command: 'version',
-        description: ['Shows this software version'],
+        description: ['Shows this software version.'],
         handle: function (session) {
             session.output.push({ output: true, text: ['Version 0.1 Beta'], breakLine: true });
         }
@@ -12,7 +12,7 @@
 
     commandBrokerProvider.appendCommandHandler({
         command: 'clear',
-        description: ['Clears the screen'],
+        description: ['Clears the screen.'],
         handle: function (session) {
             session.commands.push({ command: 'clear' });
         }
@@ -20,7 +20,7 @@
 
     commandBrokerProvider.appendCommandHandler({
         command: 'echo',
-        description: ['Echoes <parameter>'],
+        description: ['Echoes input.'],
         handle: function (session) {
             var a = Array.prototype.slice.call(arguments, 1);
             session.output.push({ output: true, text: [a.join(' ')], breakLine: true });
@@ -29,7 +29,7 @@
 
     commandBrokerProvider.appendCommandHandler({
         command: 'eval',
-        description: ['Evaluates <parameter> as Javascript and returns the output'],
+        description: ['Evaluates input as javascript.','Example: eval alert(1)'],
         handle: function (session, param) {
             var a = Array.prototype.slice.call(arguments, 1);
             var param = eval(a.join(' '));
@@ -40,7 +40,7 @@
 
     commandBrokerProvider.appendCommandHandler({
         command: 'break',
-        description: ['Tests how commands are broken down in segments.'],
+        description: ['Tests how commands are broken down in segments.',"Example: break 'aaa aaa' aaa aaa"],
         handle: function (session) {
             var a = Array.prototype.slice.call(arguments, 1);
             session.output.push({ output: true, text: a, breakLine: true });
@@ -131,20 +131,20 @@
         }
     });
 
-    var gaCommandHandler = function () {
-        var me = {};
-        var _ga = null;
-        me.command = 'ga';
-        me.description = ['Manipulates Google Analytics'];
-        me.init = ['$ga', function ($ga) {
-            _ga = $ga;
-        }];
-        me.handle = function (session, param) {
-            _ga.apply(_ga, Array.prototype.slice.call(arguments, 1));
-        }
-        return me;
-    };
-    commandBrokerProvider.appendCommandHandler(gaCommandHandler());
+    //var gaCommandHandler = function () {
+    //    var me = {};
+    //    var _ga = null;
+    //    me.command = 'ga';
+    //    me.description = ['Manipulates Google Analytics'];
+    //    me.init = ['$ga', function ($ga) {
+    //        _ga = $ga;
+    //    }];
+    //    me.handle = function (session, param) {
+    //        _ga.apply(_ga, Array.prototype.slice.call(arguments, 1));
+    //    }
+    //    return me;
+    //};
+    //commandBrokerProvider.appendCommandHandler(gaCommandHandler());
 
     var feedbackCommandHandler = function () {
         var me = {};
