@@ -1,4 +1,4 @@
-﻿angular.module('vtortola-ng-terminal', [])
+﻿angular.module('vtortola.ng-terminal', [])
 
 .provider('terminalConfiguration', function () {
     var provider = function () {
@@ -163,39 +163,44 @@
     return {
         restrict: 'E',
         controller: 'terminalController',
-        template: "<section class='terminal' ng-paste='handlePaste($event)'><div class='results'></div><span class='prompt' ng-show='showPrompt'>{{prompt}}</span><span class='terminal-input'>{{commandLine}}</span><span class='cursor'>_</span></section>",
+        template: "<section class='terminal' ng-paste='handlePaste($event)'><div class='terminal-results'></div><span class='terminal-prompt' ng-show='showPrompt'>{{prompt}}</span><span class='terminal-input'>{{commandLine}}</span><span class='terminal-cursor'>_</span></section>",
         link: function (scope, element, attrs, controller) {
             
             var consoleView = angular.element(element[0].querySelector('.terminal'));
-            var results = angular.element(element[0].querySelector('.results'));
-            var prompt = angular.element(element[0].querySelector('.prompt'));
-            var cursor = angular.element(element[0].querySelector('.cursor'));
+            var results = angular.element(element[0].querySelector('.terminal-results'));
+            var prompt = angular.element(element[0].querySelector('.terminal-prompt'));
+            var cursor = angular.element(element[0].querySelector('.terminal-cursor'));
             var consoleInput = angular.element(element[0].querySelector('.terminal-input'));
 
             setInterval(function () {
-                cursor.toggleClass('cursor-hidden');
+                cursor.toggleClass('terminal-cursor-hidden');
             }, 500);
 
             $document.on("keypress", function (e) {
-                scope.keypress(e.which);
+                if (scope.showPrompt)
+                    scope.keypress(e.which);
                 e.preventDefault();
             });
 
             $document.on("keydown", function (e) {
                 
                 if (e.keyCode == 8) {
-                    scope.backspace();
+                    if (scope.showPrompt)
+                        scope.backspace();
                     e.preventDefault();
                 }
                 else if (e.keyCode == 13) {
-                    scope.execute();
+                    if (scope.showPrompt)
+                        scope.execute();
                 }
                 else if (e.keyCode == 38) {
-                    scope.previousCommand();
+                    if (scope.showPrompt)
+                        scope.previousCommand();
                     e.preventDefault();
                 }
                 else if (e.keyCode == 40) {
-                    scope.nextCommand();
+                    if (scope.showPrompt)
+                        scope.nextCommand();
                     e.preventDefault();
                 }
             });
@@ -223,22 +228,27 @@
                     }
                 }
 
-                for (var j = 0; j < newValues.length; j++) {
-                    var newValue = newValues[j];
+                scope.showPrompt = false;
+                var f = [function () {
+                    scope.showPrompt = true;
+                    scope.$$phase || scope.$apply();
+                    consoleView[0].scrollTop = consoleView[0].scrollHeight;
+                }];
 
+                //var output = newValues.filter(function (item) { return item.output; });
+                //var commands = newValues.filter(function (item) { return !item.output;})
+
+                for (var j = 0; j < newValues.length; j++) {
+                    
+                    var newValue = newValues[j];
                     if (newValue.displayed)
                         continue;
 
                     newValue.displayed = true;
 
-                    var f = [function () {
-                        scope.showPrompt = true;
-                        scope.$$phase || scope.$apply();
-                        consoleView[0].scrollTop = consoleView[0].scrollHeight;
-                    }];
-                    scope.showPrompt = false;
                     for (var i = newValue.text.length-1; i >= 0; i--) {
                         var line = document.createElement('pre');
+                        line.className = 'terminal-line';
                         var textLine = newValue.text[i];
                         
                         if (newValue.output) {
@@ -265,8 +275,9 @@
                         }
                         
                     }
-                    f[f.length-1]();
+                    
                 }
+                f[f.length - 1]();
             });
         }
     }

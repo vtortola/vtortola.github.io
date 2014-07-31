@@ -3,7 +3,7 @@
     <head>
         <link rel="shortcut icon" href="favicon.ico">
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.js"></script>
-        <script src="script/vtortola-ng-terminal.js"></script>
+        <script src="script/vtortola.ng-terminal.js"></script>
         <script src="script/vtortola.GitHub.io.js"></script>
         <script src="script/vtortola.GitHub.io.commands.js"></script>
         <style>
@@ -19,7 +19,7 @@
                 background: linear-gradient(135deg,  rgba(0,0,0,1) 0%,rgba(69,72,77,1) 100%);
                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#45484d',GradientType=1 );
             }
-            pre{
+            .terminal-line{
                 margin:0;
                 padding:0;
             }
@@ -47,16 +47,16 @@
                 text-shadow: 0 0 8px rgba(255, 255, 255, 1);
                 box-shadow: 0 0 20px rgba(217, 215, 255, 0.85) inset, 2px 2px 16px #000;
             }
-            .cursor{
+            .terminal-cursor{
                 visibility:visible;
             }
-            .cursor-hidden{
+            .terminal-cursor-hidden{
                 visibility:hidden;
             }
             .terminal-input{
                 white-space:pre-wrap;
             }
-            .result-line-server{
+            .terminal-result-line-server{
                 margin-left:10px;
             }
         </style>

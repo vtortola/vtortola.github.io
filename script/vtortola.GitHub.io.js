@@ -1,4 +1,4 @@
-﻿angular.module('vtortola.GitHub.io', ['vtortola-ng-terminal'])
+﻿angular.module('vtortola.GitHub.io', ['vtortola.ng-terminal'])
 
 .provider('$ga', function () {
 
@@ -113,6 +113,9 @@
         me.$get = ['$injector', 'commandLineSplitter', function ($injector, commandLineSplitter) {
             return {
                 execute: function (session, consoleInput) {
+
+                    if (!consoleInput)
+                        return;
 
                     var parts = commandLineSplitter.split(consoleInput);
 

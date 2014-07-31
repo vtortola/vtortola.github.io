@@ -100,12 +100,12 @@
         }
     });
 
-
-    commandBrokerProvider.appendCommandHandler({
-        command: 'help',
-        description: ['Provides instructions about how to use this terminal'],
-        handle: function (session, cmd) {
-            var list = commandBrokerProvider.describe();
+    var helpCommandHandler = function () {
+        var me = {};
+        var list = commandBrokerProvider.describe();
+        me.command= 'help';
+        me.description= ['Provides instructions about how to use this terminal'];
+        me.handle = function (session, cmd) {
             var outText = [];
             if (cmd) {
                 for (var i = 0; i < list.length; i++) {
@@ -128,8 +128,10 @@
                 outText.push("Enter 'help <command>' to get help for a particular command.");
             }
             session.output.push({ output: true, text: outText, breakLine: true });
-        }
-    });
+        };
+        return me;
+    };
+    commandBrokerProvider.appendCommandHandler(helpCommandHandler());
 
     //var gaCommandHandler = function () {
     //    var me = {};
