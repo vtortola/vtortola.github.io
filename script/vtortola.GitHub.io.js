@@ -8,7 +8,7 @@
     var script = document.createElement('script');
     var prevScript = document.getElementsByTagName('script')[0];
     script.async = 1;
-    script.src = '//www.google-analytics.com/analytics.js';
+    script.src = '//www.google-analytics.com/analytics_debug.js';
     prevScript.parentNode.insertBefore(script, prevScript);
 
     var provider = function () {

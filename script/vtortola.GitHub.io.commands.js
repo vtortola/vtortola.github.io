@@ -100,22 +100,48 @@
         }
     });
 
-    //var gaCommandHandler = function () {
-    //    var me = {};
-    //    var _ga = null;
-    //    me.command = 'ga';
-    //    me.description = ['Manipulates Google Analytics'];
-    //    me.init = ['$ga', function ($ga) {
-    //        _ga = $ga;
-    //    }];
-    //    me.handle = function (session, param) {
-    //        //_ga.apply(_ga, Array.prototype.slice.call(arguments, 1));
+    var suCommandHandler = function () {
+        var me = {};
+        var ga = null;
+        me.command= 'su';
+        me.description = ['Changes the  user identity.', "Syntax: su <userName>", "Example: su vtortola"];
+        me.init = ['$ga', function ($ga) {
+            ga = $ga;
+        }];
+        me.handle= function (session, login) {
+            if (!login) {
+                session.output.push({ output: true, text: ["The <userName> parameter is required.", "Type 'help su' to get a hint."], breakLine: true });
+                return;
+            }
 
-    //        ga('set', { userId: '1234' });
-    //    }
-    //    return me;
-    //};
-    //commandBrokerProvider.appendCommandHandler(gaCommandHandler());
+            ga('set', { userId: login.toString() });
+            session.login = login;
+            session.commands.push({ command: 'startcontext', prompt: login + ':/>', user:true });
+            session.output.push({ output: true, text: ["Identity changed."], breakLine: true });
+        }
+        return me;
+    };
+    commandBrokerProvider.appendCommandHandler(suCommandHandler());
+
+    var gaCommandHandler = function () {
+        var me = {};
+        var _ga = null;
+        me.command = 'ga';
+        me.description = ['Manipulates Google Analytics', "Syntax: ga <command> <operation> <item>", "Example: ga tracker get clientId"];
+        me.init = ['$ga', function ($ga) {
+            _ga = $ga;
+        }];
+        me.handle = function (session, command, operation, item) {
+            if (command == 'tracker') {
+                _ga(function (tracker) {
+                    var r = tracker[operation](item);
+                    session.output.push({ output: true, text: [r], breakLine: true });
+                });
+            }
+        }
+        return me;
+    };
+    commandBrokerProvider.appendCommandHandler(gaCommandHandler());
 
     var feedbackCommandHandler = function () {
         var me = {};
@@ -162,6 +188,8 @@
                         break;
                     }
                 }
+                if(!outText.length)
+                    outText.push("There is no command help for: " + cmd);
             }
             else {
                 outText.push("Available commands:");
