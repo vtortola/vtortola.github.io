@@ -140,7 +140,9 @@
     //        _ga = $ga;
     //    }];
     //    me.handle = function (session, param) {
-    //        _ga.apply(_ga, Array.prototype.slice.call(arguments, 1));
+    //        //_ga.apply(_ga, Array.prototype.slice.call(arguments, 1));
+
+    //        ga('set', { userId: '1234' });
     //    }
     //    return me;
     //};

@@ -212,7 +212,7 @@
                 commandBroker.execute($scope.session, cmd.command);
             }
         } catch (err) {
-            $scope.session.output.push({ output: true, breakLine: true, text: [err.message, "Please type 'help' to see a list of commands"] });
+            $scope.session.output.push({ output: true, breakLine: true, text: [err.message] });
         }
     });
 }])
