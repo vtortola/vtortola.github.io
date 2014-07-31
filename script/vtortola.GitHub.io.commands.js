@@ -100,11 +100,55 @@
         }
     });
 
+    //var gaCommandHandler = function () {
+    //    var me = {};
+    //    var _ga = null;
+    //    me.command = 'ga';
+    //    me.description = ['Manipulates Google Analytics'];
+    //    me.init = ['$ga', function ($ga) {
+    //        _ga = $ga;
+    //    }];
+    //    me.handle = function (session, param) {
+    //        //_ga.apply(_ga, Array.prototype.slice.call(arguments, 1));
+
+    //        ga('set', { userId: '1234' });
+    //    }
+    //    return me;
+    //};
+    //commandBrokerProvider.appendCommandHandler(gaCommandHandler());
+
+    var feedbackCommandHandler = function () {
+        var me = {};
+        var _ga = null;
+        me.command = 'feedback';
+        me.description = ['Sends a feedback message to the author.', "Example: feedback This application is awesome! Where may I donate?"];
+        me.init = ['$ga', function ($ga) {
+            _ga = $ga;
+        }];
+        me.handle = function (session, param) {
+            param = Array.prototype.slice.call(arguments, 1);
+            param = param.join(' ');
+            var outText = [];
+            if (!param) {
+                outText.push("You need to provide a message, type 'help feedback' to get a hint.");
+            }
+            else {
+                outText.push("Your message have been sent.");
+                outText.push("Thanks for the feedback!.");
+                _ga('send', 'event', 'Console', 'Feedback', param);
+            }
+            session.output.push({ output: true, text: outText, breakLine: true });
+        }
+        return me;
+    };
+    commandBrokerProvider.appendCommandHandler(feedbackCommandHandler());
+
+    // this must be the last
     var helpCommandHandler = function () {
         var me = {};
         var list = commandBrokerProvider.describe();
-        me.command= 'help';
-        me.description= ['Provides instructions about how to use this terminal'];
+        me.command = 'help';
+        me.description = ['Provides instructions about how to use this terminal'];
         me.handle = function (session, cmd) {
             var outText = [];
             if (cmd) {
@@ -132,41 +176,6 @@
         return me;
     };
     commandBrokerProvider.appendCommandHandler(helpCommandHandler());
-
-    //var gaCommandHandler = function () {
-    //    var me = {};
-    //    var _ga = null;
-    //    me.command = 'ga';
-    //    me.description = ['Manipulates Google Analytics'];
-    //    me.init = ['$ga', function ($ga) {
-    //        _ga = $ga;
-    //    }];
-    //    me.handle = function (session, param) {
-    //        //_ga.apply(_ga, Array.prototype.slice.call(arguments, 1));
-
-    //        ga('set', { userId: '1234' });
-    //    }
-    //    return me;
-    //};
-    //commandBrokerProvider.appendCommandHandler(gaCommandHandler());
-
-    var feedbackCommandHandler = function () {
-        var me = {};
-        var _ga = null;
-        me.command = 'feedback';
-        me.description = ['Sends a feedback message to the author.'];
-        me.init = ['$ga', function ($ga) {
-            _ga = $ga;
-        }];
-        me.handle = function (session, param) {
-            var a = Array.prototype.slice.call(arguments, 1);
-            var param = a.join(' ');
-            _ga('send', 'event', 'Console', 'Feedback', param);
-            session.output.push({ output: true, text: ["Your message have been sent.", "Thanks for the feedback!."], breakLine: true });
-        }
-        return me;
-    };
-    commandBrokerProvider.appendCommandHandler(feedbackCommandHandler());
 }])
 
 ;
