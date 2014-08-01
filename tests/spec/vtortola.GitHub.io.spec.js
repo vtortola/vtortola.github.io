@@ -22,4 +22,36 @@
             expect(splitter.split("{ prop:'hello hello' } { prop:'hello hello' }")).toEqual(["{ prop:'hello hello' }", "{ prop:'hello hello' }"]);
         });
     });
+
+    describe('commandBroker', function () {
+
+        var broker = null;
+
+        //module(['commandBrokerProvider', function (commandBrokerProvider) {
+        //    commandBrokerProvider.appendCommandHandler({
+        //        command: 'test',
+        //        description: ['test'],
+        //        handle: function (session) {
+        //            session.output.push({ output: true, text: ['test1'], breakLine: true });
+        //            session.commands.push({ text:'test2' });
+        //        }
+        //    });
+        //}]);
+
+        beforeEach(inject(['commandBroker', function (commandBroker) {
+            broker = commandBroker;
+        }]));
+
+        var session = {
+            output: [],
+            commands:[]
+        };
+        it('Find command', function () {
+            broker.execute(session, "version");
+            expect(session.output.length).toEqual(1);
+            //expect(session.output[0].text[0]).toEqual('test1');
+            //expect(session.commands.length).toEqual(1);
+            //expect(session.commands[0].text).toEqual('test2');
+        });
+    });
 });
