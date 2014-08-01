@@ -27,15 +27,15 @@
 
         var broker = null;
 
-        beforeEach(module('vtortola.GitHub.io.command.tools',['commandBrokerProvider', function (commandBrokerProvider) {
-                commandBrokerProvider.appendCommandHandler({
-                    command: 'test',
-                    description: ['test'],
-                    handle: function (session) {
-                        session.output.push({ output: true, text: ['test1'], breakLine: true });
-                        session.commands.push({ text: 'test2' });
-                    }
-                });
+        beforeEach(module('vtortola.GitHub.io.command.tools', ['commandBrokerProvider', function (commandBrokerProvider) {
+            commandBrokerProvider.appendCommandHandler({
+                command: 'test',
+                description: ['test'],
+                handle: function (session) {
+                    session.output.push({ output: true, text: ['test1'], breakLine: true });
+                    session.commands.push({ text: 'test2' });
+                }
+            });
         }]));
 
         beforeEach(inject(['commandBroker', function (commandBroker) {
@@ -46,7 +46,7 @@
             output: [],
             commands: []
         };
-        
+
         it('Find command', function () {
             broker.execute(session, "test");
             expect(session.output.length).toEqual(1);

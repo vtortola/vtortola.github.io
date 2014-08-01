@@ -35,13 +35,25 @@
             _startEffectUrl = url
         };
 
+        var emptyDonePromise = function ($q,v) {
+            var deferred = $q.defer();
+            deferred.resolve(v);
+            return deferred.promise;
+        };
+
         me.$get = ['$q', function ($q) {
             return {
                 getTypeEffect: function () {
-                    return loadNotificationSound($q,_typeEffectUrl);
+                    if (_typeEffectUrl)
+                        return loadNotificationSound($q, _typeEffectUrl);
+                    else
+                        return emptyDonePromise($q, function () { });
                 },
                 getStartEffect: function () {
-                    return loadNotificationSound($q,_startEffectUrl);
+                    if (_startEffectUrl)
+                        return loadNotificationSound($q, _startEffectUrl);
+                    else
+                        return emptyDonePromise($q, function () { });
                 }
             };
         }];

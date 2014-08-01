@@ -78,7 +78,7 @@
 
     var provider = function () {
         var me = {};
-        var handlers = [];
+        me.handlers = [];
 
         me.$get = ['$injector', 'commandLineSplitter', function ($injector, commandLineSplitter) {
             return {
@@ -89,20 +89,28 @@
 
                     var parts = commandLineSplitter.split(consoleInput);
 
-                    var suitableHandlers = handlers.filter(function (item) {
+                    var suitableHandlers = me.handlers.filter(function (item) {
                         return item.command == parts[0].toLowerCase();
                     });
 
                     if (suitableHandlers.length == 0)
                         throw new Error("There is no suitable handler for that command.");
 
-                    var h = suitableHandlers[0];
-
-                    if (h.init)
-                        $injector.invoke(h.init);
+                    var h = suitableHandlers[0];                      
 
                     parts[0] = session;
                     h.handle.apply(h, parts);
+                },
+
+                init: function () { // inject dependencies on commands
+                    // this method should run in '.config()' time, but also does the command addition,
+                    // so run it at '.run()' time makes more sense and ensure all commands are already present.
+                    for (var i = 0; i < me.handlers.length; i++) {
+                        var handler = me.handlers[i];
+                        if (handler.init) {
+                            $injector.invoke(handler.init);
+                        }
+                    }
                 }
             }
         }];
@@ -111,18 +119,18 @@
             if (!handler || !handler.command || !handler.handle || !handler.description)
                 throw new Error("Invalid command handler");
 
-            var suitableHandlers = handlers.filter(function (item) {
+            var suitableHandlers = me.handlers.filter(function (item) {
                 return item.command == handler.command;
             });
 
             if (suitableHandlers.length != 0)
                 throw new Error("There is already a handler for that command.");
 
-            handlers.push(handler);
+            me.handlers.push(handler);
         };
 
         me.describe = function () {
-            return handlers.map(function (item) { return { command: item.command, description: item.description }; });
+            return me.handlers.map(function (item) { return { command: item.command, description: item.description }; });
         };
 
         return me;
@@ -130,5 +138,9 @@
 
     return provider();
 })
+
+.run(['commandBroker', function (commandBroker) {
+    commandBroker.init();
+}])
 
 ;

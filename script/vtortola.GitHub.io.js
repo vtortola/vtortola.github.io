@@ -1,9 +1,8 @@
-﻿angular.module('vtortola.GitHub.io', ['vtortola.ng-terminal','vtortola.GitHub.io.command.tools'])
-
+﻿angular.module('vtortola.GitHub.io', ['vtortola.ng-terminal','vtortola.GitHub.io.command.tools','vtortola.GitHub.io.commands'])
 .provider('$ga', function () {
 
     window['GoogleAnalyticsObject'] = 'ga';
-    window['ga'] = window['ga'] || function () { (window['ga'].q = window['ga'].q || []).push(arguments)}
+    window['ga'] = window['ga'] || function () { (window['ga'].q = window['ga'].q || []).push(arguments) }
     window['ga'].l = 1 * new Date();
     var script = document.createElement('script');
     var prevScript = document.getElementsByTagName('script')[0];
@@ -16,13 +15,13 @@
 
         me.$get = function () {
             ga('send', 'pageview');
-            return function () {                
+            return function () {
                 return window.ga.apply(window, arguments);
             }
         };
 
         me.ga = function () {
-                return window.ga.apply(window, arguments);
+            return window.ga.apply(window, arguments);
         };
 
         return me;
@@ -30,7 +29,6 @@
 
     return provider();
 })
-
 .controller('console',['$scope','$ga','commandBroker', function ($scope, $ga, commandBroker) {
 
     setTimeout(function () {

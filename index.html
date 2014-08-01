@@ -56,12 +56,27 @@
             .terminal-result-line-server{
                 margin-left:10px;
             }
+            .unit-tests{
+                color: #fff;
+                text-decoration: none;
+                font-family: consolas;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                margin: 10px;
+                transition:linear color .4s;
+            }
+            .unit-tests:hover{
+                color:#53FF42;
+            }
         </style>
+        <meta name="description" content="Javascript Terminal emulator" />
         <title>vtortola.GitHub.io</title>
     </head>
     <body ng-app="vtortola.GitHub.io" ng-controller="console">
         <terminal>
 
         </terminal>
+        <a class="unit-tests" href="/tests">Unit tests</a>
     </body>
 </html>

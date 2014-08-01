@@ -1,4 +1,4 @@
-﻿angular.module('vtortola.GitHub.io')
+﻿angular.module('vtortola.GitHub.io.commands', ['vtortola.GitHub.io.command.tools'])
 
 .config(['commandBrokerProvider', function (commandBrokerProvider) {
 
