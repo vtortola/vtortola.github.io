@@ -29,15 +29,16 @@
             expect(scope.commandLine).toEqual("R");
         });
 
-        it('CommandLine executing, async?? TODO', function (done) {
+        it('CommandLine executing', function (done) {
 
             var c = {};
             scope.$on('terminal-input', function (e) {
                 console.log(e);
                 c.event = e;
-                done();
+                
                 expect(scope.commandLine).toEqual("");
                 expect(scope.results.length).toEqual(1);
+                done();
             });
 
             scope.keypress(82);
