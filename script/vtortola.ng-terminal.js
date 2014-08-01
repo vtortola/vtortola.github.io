@@ -235,9 +235,6 @@
                     consoleView[0].scrollTop = consoleView[0].scrollHeight;
                 }];
 
-                //var output = newValues.filter(function (item) { return item.output; });
-                //var commands = newValues.filter(function (item) { return !item.output;})
-
                 for (var j = 0; j < newValues.length; j++) {
                     
                     var newValue = newValues[j];

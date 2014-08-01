@@ -1,6 +1,6 @@
-﻿describe('vtortola.GitHub.io', function () {
+﻿describe('vtortola.GitHub.io.command.tools', function () {
 
-    beforeEach(module('vtortola.GitHub.io'));
+    beforeEach(module('vtortola.GitHub.io.command.tools'));
 
     describe('commandLineSplitter', function () {
 
@@ -27,16 +27,16 @@
 
         var broker = null;
 
-        //module(['commandBrokerProvider', function (commandBrokerProvider) {
-        //    commandBrokerProvider.appendCommandHandler({
-        //        command: 'test',
-        //        description: ['test'],
-        //        handle: function (session) {
-        //            session.output.push({ output: true, text: ['test1'], breakLine: true });
-        //            session.commands.push({ text:'test2' });
-        //        }
-        //    });
-        //}]);
+        beforeEach(module('vtortola.GitHub.io.command.tools',['commandBrokerProvider', function (commandBrokerProvider) {
+                commandBrokerProvider.appendCommandHandler({
+                    command: 'test',
+                    description: ['test'],
+                    handle: function (session) {
+                        session.output.push({ output: true, text: ['test1'], breakLine: true });
+                        session.commands.push({ text: 'test2' });
+                    }
+                });
+        }]));
 
         beforeEach(inject(['commandBroker', function (commandBroker) {
             broker = commandBroker;
@@ -44,14 +44,15 @@
 
         var session = {
             output: [],
-            commands:[]
+            commands: []
         };
+        
         it('Find command', function () {
-            broker.execute(session, "version");
+            broker.execute(session, "test");
             expect(session.output.length).toEqual(1);
-            //expect(session.output[0].text[0]).toEqual('test1');
-            //expect(session.commands.length).toEqual(1);
-            //expect(session.commands[0].text).toEqual('test2');
+            expect(session.output[0].text[0]).toEqual('test1');
+            expect(session.commands.length).toEqual(1);
+            expect(session.commands[0].text).toEqual('test2');
         });
     });
 });
