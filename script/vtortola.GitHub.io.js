@@ -59,7 +59,8 @@
                         var c = input[i];
 
                         if (c == ' ' && !currentOc) {
-                            parts.push(part);
+                            if(part)
+                                parts.push(part);
                             part = '';
                             continue;
                         }
