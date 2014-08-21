@@ -27,9 +27,8 @@
    <script>
      window.addEventListener('load',function(e){
 		console.log('DOMLoad');
-		
-		window.ga('send','pageview');
-		window.ga('send', 'timing', 'jQuery', 'Load Library', 20, 'Google CDN');
+		setTimeout(function(){window.ga('send','pageview');},10);
+		setTimeout(function(){window.ga('send', 'timing', 'jQuery', 'Load Library', 20, 'Google CDN');},10);
 	 });
    </script>
 </body>
