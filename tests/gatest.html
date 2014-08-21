@@ -25,10 +25,12 @@
 </head>
 <body>
    <script>
+     window.ga('send','pageview');
+     window.ga('send', 'timing', 'jQuery', 'Load Library', 20, 'Google CDN');
      window.addEventListener('load',function(e){
 		console.log('DOMLoad');
-		setTimeout(function(){window.ga('send','pageview');},10);
-		setTimeout(function(){window.ga('send', 'timing', 'jQuery', 'Load Library', 20, 'Google CDN');},10);
+		setTimeout(function(){},10);
+		setTimeout(function(){},10);
 	 });
    </script>
 </body>
