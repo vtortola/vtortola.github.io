@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title ng-bind="title">FullTilt</title>
+	<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m);
+    
+        // MY CODE
+        i[r]('create', 'UA-53263543-1', 'auto');
+		console.log('GA initialized');
+        i.addEventListener('error', function (e) {
+            i[r]('send', 'exception', {
+                'exDescription': "'" + e.message + "': '" + e.filename + "' at line " + e.lineno,
+                'exFatal': true
+            });
+        });
+        // END MY CODE
+    
+    })(window, document, 'script', 'http://www.google-analytics.com/analytics.js', 'ga');
+	</script>
+</head>
+<body>
+   <script>
+     window.addEventListener('load',function(e){
+		console.log('DOMLoad');
+		
+		window.ga('send','pageview');
+		window.ga('send', 'timing', 'jQuery', 'Load Library', 20, 'Google CDN');
+	 });
+   </script>
+</body>
+</html>
