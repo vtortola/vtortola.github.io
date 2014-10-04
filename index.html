@@ -2,81 +2,27 @@
 <html>
     <head>
         <link rel="shortcut icon" href="favicon.ico">
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.js"></script>
-        <script src="script/vtortola.ng-terminal.js"></script>
-        <script src="script/vtortola.GitHub.io.command.tools.js"></script>
-        <script src="script/vtortola.GitHub.io.js"></script>
-        <script src="script/vtortola.GitHub.io.commands.js"></script>
         
-        <style>
-            html { 
-                height:100%;
-                width:100%; 
-                background-color:black;
-                background-image:url('space.jpg');
-                background-size:cover;
-             }
-            .terminal-line{
-                margin:0;
-                padding:0;
-            }
-            .terminal {
-                background: -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 83%, rgba(0,0,0,0.65) 100%);
-                background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(0,0,0,0)), color-stop(83%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0.65)));
-                background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 83%,rgba(0,0,0,0.65) 100%);
-                background: -o-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 83%,rgba(0,0,0,0.65) 100%);
-                background: -ms-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 83%,rgba(0,0,0,0.65) 100%);
-                background: radial-gradient(ellipse at center,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 83%,rgba(0,0,0,0.65) 100%);
-                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000',GradientType=1 );
-                border-radius: 20px;
-                background-size:cover;
-                background-repeat: no-repeat;
-                background-position: right bottom;
-                height: 500px;
-                width: 720px;
-                margin: 50px auto;
-                color: #F6F6FF;
-                font-family: monospace;
-                padding: 20px;
-                overflow-x: hidden;
-                overflow-y: hidden;
-                font-size: 12px;
-                text-shadow: 0 0 8px rgba(255, 255, 255, 1);
-                box-shadow: 0 0 20px rgba(217, 215, 255, 0.85) inset, 2px 2px 16px #000;
-            }
-            .terminal-cursor{
-                visibility:visible;
-            }
-            .terminal-cursor-hidden{
-                visibility:hidden;
-            }
-            .terminal-input{
-                white-space:pre-wrap;
-            }
-            .terminal-result-line-server{
-                margin-left:10px;
-            }
-            .unit-tests{
-                color: #fff;
-                text-decoration: none;
-                font-family: consolas;
-                position: absolute;
-                bottom: 0;
-                right: 0;
-                margin: 10px;
-                transition:linear color .4s;
-            }
-            .unit-tests:hover{
-                color:#53FF42;
-            }
-        </style>
-        <meta name="description" content="Javascript Terminal emulator" />
+        <link href="styles/default.css" rel="stylesheet" />
+        <meta name="description" content="vtortola @ GitHub" />
         <title>vtortola.GitHub.io</title>
     </head>
-    <body ng-app="vtortola.GitHub.io" ng-controller="console">
-        <terminal>
+    <body ng-app="vtortola.GitHub.io">
+        <h1 class="glitch" data-text="vtortola @ GitHub">vtortola @ GitHub</h1>
+        <section>
+            <h6>Page in development...</h6>
+            <p>Please visit my <a href="https://github.com/vtortola">GitHub profile</a></p>
+            <p>
+                Projects:
+                <ul>
+                    <li><a href="http://vtortola.github.io/WebSocketListener/">WebSocketListener</a>:A lightweight asynchronous .NET/Mono WebSocket server.</li>
+                    <li><a href="http://vtortola.github.io/ng-terminal-emulator/">ng-terminal-emulator</a>:A terminal emulator in Javascript with AngularJS.</li>
+                </ul>
+            </p>
+            
+        </section>
 
-        </terminal>
-        <a class="unit-tests" href="/tests">Unit tests</a>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.js"></script>
+        <script src="scripts/app.js"></script>
     </body>
 </html>
